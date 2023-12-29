@@ -26,7 +26,7 @@ const login = async (req, res) => {
             return res.status(401).json({
                 statusCode: 401,
                 message: "Unauthorized",
-                reason: "password is incorrect",
+                reason: "Password is incorrect",
             });
         }
         foundUser.password = undefined;

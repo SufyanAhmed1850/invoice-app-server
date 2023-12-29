@@ -6,6 +6,7 @@ const Authorize = async (req, res, next) => {
     try {
         console.log("Middle Authentication");
         const authorization = req.headers["authorization"];
+        console.log(authorization);
         if (!authorization) {
             res.clearCookie("jwt");
             return res.status(401).json({
@@ -16,7 +17,8 @@ const Authorize = async (req, res, next) => {
         }
         const token = authorization.split(" ")[1];
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-        const userExist = await User.findById(decodedToken.user._id);
+        console.log(decodedToken);
+        const userExist = await User.findById(decodedToken.user);
         if (!userExist) {
             return res.status(401).json({
                 message: "Unauthorized",
