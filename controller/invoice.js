@@ -1,26 +1,35 @@
 import Invoice from "../schema/invoice.js";
-import User from "../schema/user.js"; // Import the User model
+import User from "../schema/user.js";
 
 const saveInvoiceDetails = async (req, res) => {
     try {
         const { _id } = req.user;
-        console.log(req.user);
-        console.log(req.body);
         const { invoiceDetails } = req.body;
 
         const updatedUser = await User.findByIdAndUpdate(_id, {
             $inc: { invoiceCounter: 1 },
         });
-        invoiceDetails.invoiceNumber = updatedUser.invoiceCounter;
-        invoiceDetails.sender = _id;
-        const invoice = new Invoice(invoiceDetails);
-        const newInvoice = await invoice.save();
+        const invoice = new Invoice({
+            ...invoiceDetails,
+            invoiceNumber: updatedUser.invoiceCounter,
+            sender: _id,
+        });
+        await invoice.save();
+
+        const sanitizedInvoice = {
+            invoiceNumber: invoice.invoiceNumber,
+            dueDate: invoice.dueDate,
+            clientName: invoice.clientName,
+            total: invoice.total,
+            status: invoice.status,
+            _id: invoice._id,
+        };
 
         res.status(200).json({
+            invoice: sanitizedInvoice,
             code: 200,
             message: "Invoice details saved successfully!",
             status: true,
-            invoice: newInvoice,
         });
     } catch (error) {
         console.log(error);
@@ -35,14 +44,12 @@ const saveInvoiceDetails = async (req, res) => {
 const getInvoicesOverview = async (req, res) => {
     try {
         const { _id } = req.user;
-        const invoices = await Invoice.find(
-            { sender: _id },
-            "invoiceNumber dueDate clientName total status",
-        )
+        const invoices = await Invoice.find({ sender: _id })
+            .select("invoiceNumber dueDate clientName total status")
             .sort({ createdAt: -1 })
             .lean();
         res.status(200).json({
-            invoices: invoices,
+            invoices,
             code: 200,
             message: "Invoices overview details successfully retrieved!",
             status: true,
@@ -56,17 +63,19 @@ const getInvoicesOverview = async (req, res) => {
         });
     }
 };
+
 const getInvoiceDetails = async (req, res) => {
     try {
         const { invNum } = req.params;
-        const invoice = await Invoice.findOne({
-            invoiceNumber: invNum,
-        })
+        const invoice = await Invoice.findOne({ invoiceNumber: invNum })
             .populate({
                 path: "sender",
                 select: "-createdAt -email -password -invoiceCounter -updatedAt -__v",
             })
-            .select({ createdAt: 0, __v: 0, updatedAt: 0 });
+            .lean();
+        delete invoice.createdAt;
+        delete invoice.updatedAt;
+        delete invoice.__v;
         res.status(200).json({
             invoice,
             code: 200,
@@ -82,6 +91,7 @@ const getInvoiceDetails = async (req, res) => {
         });
     }
 };
+
 const editInvoiceDetails = async (req, res) => {
     try {
         const invoiceToUpdate = req.body._id;
@@ -101,6 +111,7 @@ const editInvoiceDetails = async (req, res) => {
         });
     }
 };
+
 const updateInvoiceStatus = async (req, res) => {
     try {
         const invoiceToUpdate = req.body._id;
@@ -119,10 +130,11 @@ const updateInvoiceStatus = async (req, res) => {
         });
     }
 };
+
 const deleteInvoice = async (req, res) => {
     try {
-        const invoiceToDelete = req.params._id;
-        await Invoice.findByIdAndDelete(invoiceToDelete);
+        const { _id } = req.params;
+        await Invoice.findByIdAndDelete(_id);
         res.status(200).json({
             code: 200,
             message: "Invoice deleted successfully!",
