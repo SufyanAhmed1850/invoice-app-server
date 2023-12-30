@@ -2,7 +2,7 @@ import User from "../schema/user.js";
 
 const saveCompanyDetails = async (req, res) => {
     try {
-        const { _id } = req.user;
+        const _id = req.user;
         const { companyDetails } = req.body;
         await User.findByIdAndUpdate(_id, { $set: { companyDetails } });
 
@@ -23,8 +23,7 @@ const saveCompanyDetails = async (req, res) => {
 
 const getCompanyDetails = async (req, res) => {
     try {
-        const { _id } = req.user;
-        // const { companyDetails } = req.body;
+        const _id = req.user;
         const companyDetails = await User.findById(_id).select(
             "companyDetails",
         );
