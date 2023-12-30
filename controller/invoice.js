@@ -3,12 +3,16 @@ import User from "../schema/user.js";
 
 const saveInvoiceDetails = async (req, res) => {
     try {
-        const { _id } = req.user;
+        const _id = req.user;
         const { invoiceDetails } = req.body;
 
-        const updatedUser = await User.findByIdAndUpdate(_id, {
-            $inc: { invoiceCounter: 1 },
-        });
+        const updatedUser = await User.findByIdAndUpdate(
+            _id,
+            {
+                $inc: { invoiceCounter: 1 },
+            },
+            { new: true },
+        );
         const invoice = new Invoice({
             ...invoiceDetails,
             invoiceNumber: updatedUser.invoiceCounter,
@@ -43,7 +47,7 @@ const saveInvoiceDetails = async (req, res) => {
 
 const getInvoicesOverview = async (req, res) => {
     try {
-        const { _id } = req.user;
+        const _id = req.user;
         const invoices = await Invoice.find({ sender: _id })
             .select("invoiceNumber dueDate clientName total status")
             .sort({ createdAt: -1 })

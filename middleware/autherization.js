@@ -4,9 +4,7 @@ import "dotenv/config";
 
 const Authorize = async (req, res, next) => {
     try {
-        console.log("Middle Authentication");
         const authorization = req.headers["authorization"];
-        console.log(authorization);
         if (!authorization) {
             res.clearCookie("jwt");
             return res.status(401).json({
