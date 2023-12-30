@@ -5,9 +5,11 @@ import cors from "cors";
 import corsOptions from "./config/corsOptions.js";
 import mongoose from "./config/dbConnect.js";
 import router from "./routes/router.js";
+import compression from "compression";
 
 const PORT = process.env.PORT;
 const app = express();
+app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors(corsOptions));
