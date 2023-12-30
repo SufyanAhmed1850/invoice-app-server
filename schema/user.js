@@ -3,7 +3,7 @@ import { Schema, model } from "mongoose";
 const userSchema = new Schema(
     {
         invoiceCounter: {
-            type: Number,
+            type: String,
             required: true,
         },
         email: {

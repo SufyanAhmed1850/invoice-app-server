@@ -6,16 +6,17 @@ const saveInvoiceDetails = async (req, res) => {
         const _id = req.user;
         const { invoiceDetails } = req.body;
 
-        const updatedUser = await User.findByIdAndUpdate(
-            _id,
-            {
-                $inc: { invoiceCounter: 1 },
-            },
-            { new: true },
+        const updatedUser = await User.findById(_id);
+        const incrementedCounter = String(
+            Number(updatedUser.invoiceCounter) + 1,
         );
+        updatedUser.invoiceCounter = incrementedCounter;
+        await updatedUser.save();
+        const paddedInvoiceNumber = incrementedCounter.padStart(6, "0");
+
         const invoice = new Invoice({
             ...invoiceDetails,
-            invoiceNumber: updatedUser.invoiceCounter,
+            invoiceNumber: paddedInvoiceNumber,
             sender: _id,
         });
         await invoice.save();

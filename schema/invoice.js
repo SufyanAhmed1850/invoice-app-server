@@ -2,7 +2,7 @@ import { Schema, model } from "mongoose";
 
 const invoiceSchema = new Schema(
     {
-        invoiceNumber: Number,
+        invoiceNumber: String,
         sender: {
             type: Schema.Types.ObjectId,
             ref: "User",
