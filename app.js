@@ -9,8 +9,8 @@ import compression from "compression";
 
 const PORT = process.env.PORT;
 const app = express();
-app.use(compression());
 app.use(express.json());
+app.use(compression());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors(corsOptions));
 
