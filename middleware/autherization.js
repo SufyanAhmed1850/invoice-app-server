@@ -15,7 +15,6 @@ const Authorize = async (req, res, next) => {
         }
         const token = authorization.split(" ")[1];
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-        console.log(decodedToken);
         const userExist = await User.findById(decodedToken.user);
         if (!userExist) {
             return res.status(401).json({
@@ -25,6 +24,7 @@ const Authorize = async (req, res, next) => {
             });
         }
         req.user = decodedToken.user;
+        req.company = userExist.companyDetails.name;
         next();
     } catch (error) {
         console.log(error);

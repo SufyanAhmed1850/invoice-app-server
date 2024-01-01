@@ -5,7 +5,6 @@ const saveCompanyDetails = async (req, res) => {
         const _id = req.user;
         const { companyDetails } = req.body;
         await User.findByIdAndUpdate(_id, { $set: { companyDetails } });
-
         res.status(200).send({
             code: 200,
             message: "Company details saved successfully!",
@@ -27,7 +26,6 @@ const getCompanyDetails = async (req, res) => {
         const companyDetails = await User.findById(_id).select(
             "companyDetails",
         );
-
         res.status(200).send({
             companyDetails,
             code: 200,
