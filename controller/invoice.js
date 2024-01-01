@@ -19,17 +19,8 @@ const saveInvoiceDetails = async (req, res) => {
             sender: _id,
         });
         await invoice.save();
-        const sanitizedInvoice = {
-            invoiceNumber: invoice.invoiceNumber,
-            dueDate: invoice.dueDate,
-            clientName: invoice.clientName,
-            total: invoice.total,
-            status: invoice.status,
-            _id: invoice._id,
-        };
 
         res.status(200).json({
-            invoice: sanitizedInvoice,
             code: 200,
             message: "Invoice details saved successfully!",
             status: true,
