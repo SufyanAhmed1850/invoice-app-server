@@ -37,19 +37,29 @@ const saveInvoiceDetails = async (req, res) => {
 
 const getInvoicesOverview = async (req, res) => {
     try {
-        const page = req.query.page;
+        const { page, filterOptions } = req.body;
         const limit = 10;
         const skip = (page - 1) * limit;
         const company = req.company;
         const _id = req.user;
-        const invoices = await Invoice.find({ sender: _id })
+        const statusOptions = filterOptions
+            .filter((option) => option.checked)
+            .map((option) => option.text);
+        console.log(statusOptions);
+        let query = { sender: _id };
+
+        // Filtering by status if statusOptions array is not empty
+        // if (statusOptions.length > 0) {
+        query.status = { $in: statusOptions };
+        // }
+
+        const invoices = await Invoice.find(query)
             .select("invoiceNumber dueDate clientName total status")
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(parseInt(limit))
             .lean();
-        const totalInvoices = await Invoice.countDocuments({ sender: _id });
-        console.log(totalInvoices);
+        const totalInvoices = await Invoice.countDocuments(query);
         const totalPages = Math.ceil(totalInvoices / limit);
         res.status(200).json({
             totalInvoices,
