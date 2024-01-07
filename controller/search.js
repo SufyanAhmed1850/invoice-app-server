@@ -3,6 +3,7 @@ import Invoice from "../schema/invoice.js";
 const searchInvoiceNumber = async (req, res) => {
     const _id = req.user;
     const invNum = req.query.invoiceNumber;
+    const company = req.company;
     console.log(_id);
     console.log(invNum);
     try {
@@ -19,6 +20,7 @@ const searchInvoiceNumber = async (req, res) => {
 
         res.status(200).json({
             invoice,
+            company,
             code: 200,
             message: "Invoice found!",
             status: true,
