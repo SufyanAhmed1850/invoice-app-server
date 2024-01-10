@@ -15,7 +15,7 @@ const login = async (req, res) => {
         if (!foundUser) {
             return res.status(401).json({
                 statusCode: 401,
-                message: "Unauthorized",
+                message: "Incorrect email or password.",
                 reason: "User does not exist",
             });
         }
@@ -23,7 +23,7 @@ const login = async (req, res) => {
         if (!match) {
             return res.status(401).json({
                 statusCode: 401,
-                message: "Unauthorized",
+                message: "Incorrect email or password.",
                 reason: "Password is incorrect",
             });
         }
@@ -35,9 +35,11 @@ const login = async (req, res) => {
                 expiresIn: "7d",
             },
         );
-        return res
-            .status(200)
-            .json({ message: "Success", token, user: foundUser });
+        return res.status(200).json({
+            message: "Successfully logged in",
+            token,
+            user: foundUser,
+        });
     } catch (e) {
         console.error(e);
         return res.status(500).json({

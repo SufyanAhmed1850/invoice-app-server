@@ -45,14 +45,8 @@ const getInvoicesOverview = async (req, res) => {
         const statusOptions = filterOptions
             .filter((option) => option.checked)
             .map((option) => option.text);
-        console.log(statusOptions);
         let query = { sender: _id };
-
-        // Filtering by status if statusOptions array is not empty
-        // if (statusOptions.length > 0) {
         query.status = { $in: statusOptions };
-        // }
-
         const invoices = await Invoice.find(query)
             .select("invoiceNumber dueDate clientName total status")
             .sort({ createdAt: -1 })
@@ -84,8 +78,6 @@ const getInvoiceDetails = async (req, res) => {
     try {
         const _id = req.user;
         const { invNum } = req.params;
-        console.log(_id);
-        console.log(invNum);
         const invoice = await Invoice.findOne({
             sender: _id,
             invoiceNumber: invNum,
@@ -95,12 +87,14 @@ const getInvoiceDetails = async (req, res) => {
                 select: "-createdAt -email -password -invoiceCounter -updatedAt -__v -_id",
             })
             .lean();
+        console.log(invoice);
+        if (invoice) {
+            delete invoice.createdAt;
+            delete invoice.updatedAt;
+            delete invoice.__v;
+        }
 
-        delete invoice.createdAt;
-        delete invoice.updatedAt;
-        delete invoice.__v;
-
-        res.status(200).json({
+        return res.status(200).json({
             invoice,
             code: 200,
             message: "Invoice details successfully retrieved!",
@@ -108,7 +102,7 @@ const getInvoiceDetails = async (req, res) => {
         });
     } catch (error) {
         console.log(error);
-        res.status(400).json({
+        return res.status(400).json({
             code: 400,
             message: error.message,
             status: false,
