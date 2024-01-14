@@ -4,8 +4,6 @@ const searchInvoiceNumber = async (req, res) => {
     const _id = req.user;
     const invNum = req.query.invoiceNumber;
     const company = req.company;
-    console.log(_id);
-    console.log(invNum);
     try {
         const invoice = await Invoice.findOne({
             sender: _id,

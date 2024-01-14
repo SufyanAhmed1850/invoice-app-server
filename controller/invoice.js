@@ -87,7 +87,6 @@ const getInvoiceDetails = async (req, res) => {
                 select: "-createdAt -email -password -invoiceCounter -updatedAt -__v -_id",
             })
             .lean();
-        console.log(invoice);
         if (invoice) {
             delete invoice.createdAt;
             delete invoice.updatedAt;
@@ -112,7 +111,6 @@ const getInvoiceDetails = async (req, res) => {
 
 const editInvoiceDetails = async (req, res) => {
     try {
-        console.log(req.body);
         const invoiceToUpdate = req.body._id;
         req.body._id = undefined;
         await Invoice.findByIdAndUpdate(invoiceToUpdate, req.body);

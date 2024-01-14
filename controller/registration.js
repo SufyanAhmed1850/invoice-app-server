@@ -7,7 +7,6 @@ const saltRounds = 10;
 
 const registerUser = async (req, res) => {
     try {
-        console.log(req.body);
         await userValidationSchema.validateAsync(req.body);
         const { email, password } = req.body;
         const hashedPassword = await bcrypt.hash(password, saltRounds);
