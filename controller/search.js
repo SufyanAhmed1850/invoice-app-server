@@ -11,12 +11,21 @@ const searchInvoiceNumber = async (req, res) => {
         })
             .select("invoiceNumber dueDate clientName total status")
             .lean();
-
+        console.log(invoice);
+        if (!invoice) {
+            return res.status(200).json({
+                invoice: null,
+                company,
+                code: 404,
+                message: "No invoice found!",
+                status: true,
+            });
+        }
         delete invoice.createdAt;
         delete invoice.updatedAt;
         delete invoice.__v;
 
-        res.status(200).json({
+        return res.status(200).json({
             invoice,
             company,
             code: 200,
@@ -25,7 +34,7 @@ const searchInvoiceNumber = async (req, res) => {
         });
     } catch (error) {
         console.log(error);
-        res.status(400).json({
+        return res.status(400).json({
             code: 400,
             message: error.message,
             status: false,
