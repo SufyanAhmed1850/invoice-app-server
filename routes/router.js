@@ -5,6 +5,7 @@ import Authorize from "../middleware/autherization.js";
 import COMPANY from "./company.js";
 import INVOICE from "./invoice.js";
 import SEARCH from "./search.js";
+import PORTFOLIO from "./portfolio.js";
 
 const router = express.Router();
 
@@ -13,5 +14,7 @@ router.use("/login", AUTH);
 router.use("/company-details", Authorize, COMPANY);
 router.use("/search", Authorize, SEARCH);
 router.use("/invoice", Authorize, INVOICE);
+
+router.use("/portfolio", PORTFOLIO);
 
 export default router;
