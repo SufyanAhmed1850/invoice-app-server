@@ -4,6 +4,7 @@ const corsOptions = {
         "http://localhost:3000",
         "https://devv-invoice.vercel.app",
         "https://devv-invoice.netlify.app",
+        "https://portfolio-shahroz.vercel.app",
     ],
     credentials: true,
     optionsSuccessStatus: 200,
